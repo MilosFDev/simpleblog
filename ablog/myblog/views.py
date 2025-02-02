@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView 
 from .models import Post
 from .forms import PostForm, EditForm, VideoSearchForm
@@ -40,6 +40,29 @@ class AddCategoryView(CreateView):
     template_name = 'add_category.html'
     fields='__all__'
 
+from django.shortcuts import render
+from .models import Post, Category
+
+def CategoryView(request, cats):
+    try:
+        # Try to get the category
+        category = Category.objects.get(name__iexact=cats)  # Case-insensitive match
+        category_posts = Post.objects.filter(category=category)
+        return render(request, 'categories.html', {
+            'cats': cats,
+            'category_posts': category_posts
+        })
+    except Category.DoesNotExist:
+        # If category doesn't exist, show a friendly message
+        return render(request, 'categories.html', {
+            'cats': cats,
+            'category_posts': [],
+            'error_message': f"The category '{cats}' does not exist."
+        })
+
+
+
+
 
 
 
@@ -70,7 +93,7 @@ def search_videos(request):
                     'video_id': item['id']['videoId']
                 })
 
-    return render(request, 'video_search.html', {'form': form, 'videos': videos})
+    return render(request, 'vidfeo_search.html', {'form': form, 'videos': videos})
 
 
 

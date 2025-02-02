@@ -1,0 +1,27 @@
+<h1>{{ cats }}</h1>
+
+{% if error_message %}
+    <h2>{{ error_message }}</h2>  <!-- Display the error message if it exists -->
+{% else %}
+    {% if category_posts %}
+        <ul>
+            {% for post in category_posts %}
+                <li>
+                    <a href="{% url 'article-detail' post.pk %}">{{ post.title }}</a>
+                    <strong>{{ post.category }}</strong>
+                    - {{ post.author.first_name }} {{ post.author.last_name }}
+                    - <small>{{ post.post_date }}</small>
+
+                    {% if user.is_authenticated and user == post.author %}
+                        - <small><a href="{% url 'update_post' post.pk %}">Edit</a></small>
+                        - <small><a href="{% url 'delete_post' post.pk %}">Delete</a></small>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <h2>No posts available in this category.</h2>
+    {% endif %}
+{% endif %}
+
+
